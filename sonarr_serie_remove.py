@@ -3,10 +3,11 @@ import requests, os, time
 from datetime import datetime
 from webhook_discord import *
 
-def tvdbId_to_serieId_sonarr(api_key_sonarr, tvdbId, discord_webhook_error):
+def tvdbId_to_serieId_sonarr(api_key_sonarr, tvdbId, discord_webhook_error, url_sonarr):
     headers = {'X-Api-Key': api_key_sonarr}
-    urlserie = 'http://192.168.1.15:8989/api/v3/series?tvdbId={TVDBID}&includeSeasonImages=false'
+    urlserie = 'http://{url_sonarr}/api/v3/series?tvdbId={TVDBID}&includeSeasonImages=false'
     urlserie = urlserie.replace('{TVDBID}', str(tvdbId))
+    urlserie = urlserie.replace('{url_sonarr}', url_sonarr)
 
     response = requests.get(urlserie, headers=headers)
 
@@ -28,9 +29,10 @@ def tvdbId_to_serieId_sonarr(api_key_sonarr, tvdbId, discord_webhook_error):
 
     return serieid, seriename, seriefolder
 
-def queue_sonarr(api_key_sonarr, discord_webhook_error):
+def queue_sonarr(api_key_sonarr, discord_webhook_error, url_sonarr):
     #regturn true or false if queue is empty or not
-    url_queue = 'http://192.168.1.15:8989/api/v3/queue/'
+    url_queue = 'http://{url_sonarr}/api/v3/queue/'
+    url_queue = url_queue.replace('{url_sonarr}', url_sonarr)
 
     headers = {'X-Api-Key': api_key_sonarr}
     response = requests.get(url_queue, headers=headers)
@@ -52,12 +54,13 @@ def queue_sonarr(api_key_sonarr, discord_webhook_error):
             webhook_discord_error(discord_webhook_error, "Queue is not empty in Sonarr", str(data), date)
             return True
 
-def restart_sonarr(api_key_sonarr, discord_webhook_error):
-    url_restart = 'http://192.168.1.15:8989/api/v3/system/restart'
+def restart_sonarr(api_key_sonarr, discord_webhook_error, url_sonarr):
+    url_restart = 'http://{url_sonarr}/api/v3/system/restart'
+    url_restart = url_restart.replace('{url_sonarr}', url_sonarr)
 
     time.sleep(5)
 
-    if queue_sonarr(api_key_sonarr ,discord_webhook_error):
+    if queue_sonarr(api_key_sonarr ,discord_webhook_error, url_sonarr):
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         with open('log/queue_error.log', 'a') as f:
             f.write(date + " - Queue is not empty in Sonarr\n")
@@ -74,9 +77,9 @@ def restart_sonarr(api_key_sonarr, discord_webhook_error):
             f.write(date + " - Restarting Sonarr status code: " + str(response.status_code) + "\n")
         webhook_discord_error(discord_webhook_error, "Restarting Sonarr status code", str(response.status_code), date)
 
-def sonarr_delete(api_key_sonarr, tvdbId, discord_webhook_error):
+def sonarr_delete(api_key_sonarr, tvdbId, discord_webhook_error, url_sonarr):
 
-    serieid, seriename, seriefolder = tvdbId_to_serieId_sonarr(api_key_sonarr, tvdbId, discord_webhook_error)
+    serieid, seriename, seriefolder = tvdbId_to_serieId_sonarr(api_key_sonarr, tvdbId, discord_webhook_error, url_sonarr)
 
     if serieid is None or seriename is None or seriefolder is None:
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -104,8 +107,9 @@ def sonarr_delete(api_key_sonarr, tvdbId, discord_webhook_error):
             webhook_discord_error(discord_webhook_error, "Folder not found in Sonarr", seriefolderSys, date)
             return
         
-        url_delete = 'http://192.168.1.15:8989/api/v3/series/{NUMBER}?deleteFiles=false&addImportListExclusion=false'
+        url_delete = 'http://{url_sonarr}/api/v3/series/{NUMBER}?deleteFiles=false&addImportListExclusion=false'
         url_delete = url_delete.replace('{NUMBER}', str(serieid))
+        url_delete = url_delete.replace('{url_sonarr}', url_sonarr)
 
         headers = {'X-Api-Key': api_key_sonarr}
         response = requests.delete(url_delete, headers=headers)

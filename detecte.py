@@ -7,8 +7,9 @@ from sonarr_serie_remove import *
 from webhook_discord import *
 
 def get_movie_info(api_key_overseerr, tmdb_id):
-    url = 'http://192.168.1.28:5055/api/v1/movie/{TMDBID}'
+    url = 'http://{url_overseerr}/api/v1/movie/{TMDBID}'
     url = url.replace('{TMDBID}', str(tmdb_id))
+    url = url.replace('{url_overseerr}', url_overseerr_ip)
 
     headers = {'X-Api-Key': api_key_overseerr}
 
@@ -24,8 +25,9 @@ def get_movie_info(api_key_overseerr, tmdb_id):
     return data['title']
 
 def get_serie_info(api_key_overseerr, tvdb_id):
-    url = 'http://192.168.1.28:5055/api/v1/tv/{TVDBID}'
+    url = 'http://{url_overseerr}/api/v1/tv/{TVDBID}'
     url = url.replace('{TVDBID}', str(tvdb_id))
+    url = url.replace('{url_overseerr}', url_overseerr_ip)
 
     headers = {'X-Api-Key': api_key_overseerr}
     
@@ -44,7 +46,8 @@ def get_serie_info(api_key_overseerr, tvdb_id):
 
 def setup(api_key_overseerr):
 
-    url = 'http://192.168.1.28:5055/api/v1/request?take=10000&skip=0&filter=all&sort=added'
+    url = 'http://{url_overseerr}/api/v1/request?take=10000&skip=0&filter=all&sort=added'
+    url = url.replace('{url_overseerr}', url_overseerr_ip)
     headers = {'X-Api-Key': api_key_overseerr}
 
     response = requests.get(url, headers=headers)
@@ -131,6 +134,10 @@ start_all_day = variables['start_all_day']
 url_sonarr = variables['url_sonarr']
 url_radarr = variables['url_radarr']
 
+url_radarr_ip = variables['url_radarr_ip']
+url_overseerr_ip = variables['url_overseerr_ip']
+url_sonarr_ip = variables['url_sonarr_ip']
+
 if start_all_day == False:
     ActualTime = datetime.now() + timedelta(hours=start_in)
     print("Start in: " + ActualTime.strftime("%Y-%m-%d %H:%M:%S"))
@@ -169,24 +176,24 @@ while True:
                 if is4k_movie == True and elt[7] == False:
                     continue
                 remove_element_count_movie += 1
-                if radarr_delete(api_key_radarr, elt[1], discord_webhook_error) == False:
+                if radarr_delete(api_key_radarr, elt[1], discord_webhook_error, url_radarr_ip) == False:
                     remove_element_count_movie -= 1
                     continue
-                overseerr_delete(api_key_overseerr, elt[1], elt[4], discord_webhook_error)
+                overseerr_delete(api_key_overseerr, elt[1], elt[4], discord_webhook_error, url_overseerr_ip)
             if elt[3] == 'tv':
                 if is4k_movie == True and elt[7] == False:
                     continue
                 remove_element_count_serie += 1
-                if sonarr_delete(api_key_sonarr, elt[6], discord_webhook_error) == False:
+                if sonarr_delete(api_key_sonarr, elt[6], discord_webhook_error, url_sonarr_ip) == False:
                     remove_element_count_serie -= 1
                     continue
-                overseerr_delete(api_key_overseerr, elt[1], elt[4], discord_webhook_error)
+                overseerr_delete(api_key_overseerr, elt[1], elt[4], discord_webhook_error, url_overseerr_ip)
 
         if remove_element_count_movie > 0:
-            restart_radarr(api_key_radarr, discord_webhook_error)
+            restart_radarr(api_key_radarr, discord_webhook_error, url_radarr_ip)
         
         if remove_element_count_serie > 0:
-            restart_sonarr(api_key_sonarr, discord_webhook_error)
+            restart_sonarr(api_key_sonarr, discord_webhook_error, url_sonarr_ip)
         
         if start_all_day == False:
             ActualTime = datetime.now() + timedelta(hours=waiting_time)

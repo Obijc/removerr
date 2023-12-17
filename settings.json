@@ -4,6 +4,11 @@
     "api_key_overseerr": "",
     "api_key_sonarr": "",
 
+    "_comment": "IPs format IP:PORT",
+    "url_radarr_ip": "",
+    "url_overseerr_ip": "",
+    "url_sonarr_ip": "",
+
     "_comment": "Days to wait before removing a movie or serie",
     "days_max_movie": 6,
     "days_max_serie": 6,
