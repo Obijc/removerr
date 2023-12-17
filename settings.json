@@ -1,0 +1,37 @@
+{
+    "_comment": "API key",
+    "api_key_radarr": "",
+    "api_key_overseerr": "",
+    "api_key_sonarr": "",
+
+    "_comment": "Days to wait before removing a movie or serie",
+    "days_max_movie": 6,
+    "days_max_serie": 6,
+
+    "_comment": "Time in hours to wait before a new scan if start_all_day is false this will be ignored",
+    "waiting_time": 24,
+
+    "_comment": "Time in hours to wait before starting the first scan if start_all_day is false this will be ignored",
+    "start_in": 0,
+
+    "_comment": "Date to start scan all day (format: HH:MM) or if you want specific days use start_in and waiting_time and set this to false",
+    "start_all_day": "02:00",
+
+    "_comment": "True if you want delete only movies with a 4k version",
+    "is4k_movie": false,
+
+    "_comment": "True if you want delete only series with a 4k version",
+    "is4k_serie": false,
+
+    "_comment": "Discord webhook url for info None if you don't want to use it",
+    "discord_webhook_info": "",
+
+    "_comment": "Discord webhook url for errors None if you don't want to use it",
+    "discord_webhook_error": "",
+
+    "_comment": "If radarr url not contains this string, the movie will not be deleted, false if you don't want to use it",
+    "url_radarr": "radarr",
+
+    "_comment": "If sonarr url not contains this string, the serie will not be deleted, false if you don't want to use it",
+    "url_sonarr": "sonarr"
+}
