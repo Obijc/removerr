@@ -1,4 +1,4 @@
-import requests, time, json, sys
+import requests, time, json, sys, os
 
 from datetime import datetime, timedelta
 from overseerr_request_remove import *
@@ -110,6 +110,89 @@ def save_requests(data, api_key_overseerr):
     
     return element
 
+def save_requests_manual(data, api_key_overseerr):
+
+    element = []
+
+    for request in data['results']:
+
+        if 'mediaAddedAt' in request['media']:
+            if request['media']['mediaAddedAt'] == None:
+                continue
+            updated_at = datetime.strptime(request['media']['mediaAddedAt'], "%Y-%m-%dT%H:%M:%S.%fZ")
+        elif 'mediaAddedAt' in request:
+            if request['mediaAddedAt'] == None:
+                continue
+            updated_at = datetime.strptime(request['mediaAddedAt'], "%Y-%m-%dT%H:%M:%S.%fZ")
+
+        request_id = request['id']
+        tmdb_id = request['media']['tmdbId']
+        tvdb_id = request['media']['tvdbId']
+        media_id = request['media']['id']
+        modification_date = updated_at.strftime("%Y-%m-%d %H:%M:%S")
+        typeElement = request['type']
+        statusElement = request['media']['status']
+        Element4k = request['is4k']
+
+        if request['media']['status'] not in [5,4]:
+            continue
+
+        if request['type'] == 'movie':
+            if url_radarr != False:
+                if request['rootFolder'] != None and url_radarr.lower() not in request['rootFolder'].lower():
+                    continue
+            name = get_movie_info(api_key_overseerr, tmdb_id)
+        if request['type'] == 'tv':
+            if url_sonarr != False:
+                if request['rootFolder'] != None and url_sonarr.lower() not in request['rootFolder'].lower():
+                    continue
+            #name = get_serie_info(api_key_overseerr, tvdb_id)
+            name = request['media']['externalServiceSlug']
+        
+        element.append([request_id, tmdb_id, modification_date, typeElement, media_id, statusElement, tvdb_id, Element4k, name])
+
+    element = manual_sort(element)
+    
+    return element
+
+def manual_sort(element):
+    element2 = []
+    elementlistnumer = []
+
+    print("Press exit to exit or ok to continue when you have finished")
+    while True:
+        # Show all element in consol [number] - [type] - [added date] - [name]
+        # ask user with input if he want to delete this element exmple: 1
+        for elt in element:
+            if element.index(elt) in elementlistnumer:
+                print("{:<10} - {:<10} - {:<10} - {:<10} - {:<10}".format("Deleted",element.index(elt), elt[3], elt[2], elt[8]))
+            else:
+                print("{:<10} - {:<10} - {:<10} - {:<10}".format(element.index(elt), elt[3], elt[2], elt[8]))
+        
+        input_user = input("Which element do you want to delete ? (number)\n\t-> ")
+
+        if input_user == "exit":
+            sys.exit()
+
+        if input_user == "ok":
+            break
+
+        if input_user.isdigit() == False:
+            print("Please enter a number")
+            continue
+        if int(input_user) > len(element) - 1:
+            print("Please enter a number between 0 and " + str(len(element) - 1))
+            continue
+
+        # Delete element in element2
+        element2.append(element[int(input_user)])
+        elementlistnumer.append(int(input_user))
+
+        # clear consol
+        os.system('cls')
+    
+    return element2
+
 # Importation des données depuis le fichier JSON
 with open('settings.json', 'r') as json_file:
     variables = json.load(json_file)
@@ -138,6 +221,8 @@ url_radarr_ip = variables['url_radarr_ip']
 url_overseerr_ip = variables['url_overseerr_ip']
 url_sonarr_ip = variables['url_sonarr_ip']
 
+manual_sort_var = variables['manual_sort']
+
 if start_all_day == False:
     ActualTime = datetime.now() + timedelta(hours=start_in)
     print("Start in: " + ActualTime.strftime("%Y-%m-%d %H:%M:%S"))
@@ -164,7 +249,10 @@ while True:
         remove_element_count_movie = 0
         remove_element_count_serie = 0
 
-        element = save_requests(data, api_key_overseerr)
+        if manual_sort_var == False:
+            element = save_requests(data, api_key_overseerr)
+        else:
+            element = save_requests_manual(data, api_key_overseerr)
             
         #print(save_requests(data))
         date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -194,6 +282,10 @@ while True:
         
         if remove_element_count_serie > 0:
             restart_sonarr(api_key_sonarr, discord_webhook_error, url_sonarr_ip)
+
+        if manual_sort_var == True:
+            # stop script
+            sys.exit()
         
         if start_all_day == False:
             ActualTime = datetime.now() + timedelta(hours=waiting_time)

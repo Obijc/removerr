@@ -1,20 +1,20 @@
 {
     "_comment": "API key",
-    "api_key_radarr": "",
-    "api_key_overseerr": "",
-    "api_key_sonarr": "",
+    "api_key_radarr": "xxxx",
+    "api_key_overseerr": "xxxx",
+    "api_key_sonarr": "xxx",
 
     "_comment": "IPs format IP:PORT",
-    "url_radarr_ip": "",
-    "url_overseerr_ip": "",
-    "url_sonarr_ip": "",
+    "url_radarr_ip": "127.0.0.1:7878",
+    "url_overseerr_ip": "127.0.0.1:5055",
+    "url_sonarr_ip": "127.0.0.1:8989",
 
     "_comment": "Days to wait before removing a movie or serie",
-    "days_max_movie": 6,
-    "days_max_serie": 6,
+    "days_max_movie": 180,
+    "days_max_serie": 180,
 
     "_comment": "Time in hours to wait before a new scan if start_all_day is false this will be ignored",
-    "waiting_time": 24,
+    "waiting_time": 1,
 
     "_comment": "Time in hours to wait before starting the first scan if start_all_day is false this will be ignored",
     "start_in": 0,
@@ -29,14 +29,17 @@
     "is4k_serie": false,
 
     "_comment": "Discord webhook url for info None if you don't want to use it",
-    "discord_webhook_info": "",
+    "discord_webhook_info": "url_discord_webhook_info",
 
     "_comment": "Discord webhook url for errors None if you don't want to use it",
-    "discord_webhook_error": "",
+    "discord_webhook_error": "url_discord_webhook_info",
 
-    "_comment": "If radarr url not contains this string, the movie will not be deleted, false if you don't want to use it",
-    "url_radarr": "radarr",
+    "_comment": "If radarr path not contains this string, the movie will not be deleted, false if you don't want to use it",
+    "url_radarr": "Radarr",
 
-    "_comment": "If sonarr url not contains this string, the serie will not be deleted, false if you don't want to use it",
-    "url_sonarr": "sonarr"
+    "_comment": "If sonarr path not contains this string, the serie will not be deleted, false if you don't want to use it",
+    "url_sonarr": "Sonarr",
+
+    "_comment": "If you want sort manually the movies or series, false if you don't want to use it, true if you want to use it",
+    "manual_sort": false
 }

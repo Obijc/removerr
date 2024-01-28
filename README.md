@@ -1,5 +1,10 @@
 # Movie and TV Show Deletion Script
 
+## Important !!!
+
+Le script ne fonctionne que sur le système d'exploitation Windows.
+Le script a besoin d'avoir un accès aux fichiers via le chemin que donne Radarr et Sonarr.
+
 ## Introduction
 
 Ce script est conçu pour supprimer automatiquement les films et les séries de trois plateformes (Radarr, Overseerr, Sonarr) en fonction de certains critères. Avant d'exécuter le script, assurez-vous de bien configurer le fichier `settings.json` selon les instructions ci-dessous.
@@ -44,7 +49,11 @@ Ce script est conçu pour supprimer automatiquement les films et les séries de 
 - `url_radarr`: Si l'URL de Radarr ne contient pas cette chaîne, le film ne sera pas supprimé (laisser `false` pour ne pas utiliser) (Utile si vous ne voulez suppimer que les films provenant d'un répertoire spécifique)
 - `url_sonarr`: Si l'URL de Sonarr ne contient pas cette chaîne, la série ne sera pas supprimée (laisser `false` pour ne pas utiliser) (Utile si vous ne voulez suppimer que les séries provenant d'un répertoire spécifique)
 
+### Utilisation manuel
+
+- `manual_sort`: `true` pour utiliser le mode manuel de suppression
+
 ## Utilisation
 
 1. Assurez-vous d'avoir correctement configuré le fichier `settings.json`.
-2. Lancez l'exécutable.
+2. Lancez l'exécutable ou le script detecte.py
