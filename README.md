@@ -2,7 +2,6 @@
 
 ## Important !!!
 
-Le script ne fonctionne que sur le système d'exploitation Windows.
 Le script a besoin d'avoir un accès aux fichiers via le chemin que donne Radarr et Sonarr.
 
 ## Introduction

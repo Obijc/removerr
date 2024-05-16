@@ -92,7 +92,11 @@ def sonarr_delete(api_key_sonarr, tvdbId, discord_webhook_error, url_sonarr):
         
         if os.path.exists(seriefolderSys):
             #print("Deleting folder: " + seriefolder)
-            os.system('rmdir /S /Q "{}"'.format(seriefolderSys))
+            #if os is windows
+            if os.name == 'nt':
+                os.system('rmdir /S /Q "{}"'.format(seriefolderSys))
+            else:
+                os.system('rm -rf "{}"'.format(seriefolderSys))
             time.sleep(5)
             if os.path.exists(seriefolderSys):
                 date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

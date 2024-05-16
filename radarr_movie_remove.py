@@ -92,7 +92,11 @@ def radarr_delete(api_key_radarr, tmdbId, discord_webhook_error, url_radarr):
         
         if os.path.exists(moviefolderSys):
             #print("Deleting folder: " + moviefolder)
-            os.system('rmdir /S /Q "{}"'.format(moviefolderSys))
+            #if os is windows
+            if os.name == 'nt':
+                os.system('rmdir /S /Q "{}"'.format(moviefolderSys))
+            else:
+                os.system('rm -rf "{}"'.format(moviefolderSys))
             time.sleep(5)
             if os.path.exists(moviefolderSys):
                 date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")

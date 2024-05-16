@@ -189,7 +189,10 @@ def manual_sort(element):
         elementlistnumer.append(int(input_user))
 
         # clear consol
-        os.system('cls')
+        if os.name == 'nt':
+            os.system('cls')
+        else:
+            os.system('clear')
     
     return element2
 
@@ -223,24 +226,29 @@ url_sonarr_ip = variables['url_sonarr_ip']
 
 manual_sort_var = variables['manual_sort']
 
-if start_all_day == False:
-    ActualTime = datetime.now() + timedelta(hours=start_in)
-    print("Start in: " + ActualTime.strftime("%Y-%m-%d %H:%M:%S"))
-    time.sleep(start_in * 3600)
-else:
-    try:
-        scanTime = datetime.strptime(start_all_day, "%H:%M")
-    except:
-        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        with open('log/fatal_error.log', 'a') as f:
-            f.write(date + " - " + "Error in start_all_day variable" + "\n")
-    
-    ActualTime = datetime.now()
-    ActualTime = ActualTime.replace(hour=scanTime.hour, minute=scanTime.minute, second=0, microsecond=0)
-    if ActualTime < datetime.now():
-        ActualTime = ActualTime + timedelta(days=1)
-    print("Start in: " + ActualTime.strftime("%Y-%m-%d %H:%M:%S"))
-    time.sleep((ActualTime - datetime.now()).seconds)
+# if log folder not exist create it
+if not os.path.exists('log'):
+    os.makedirs('log')
+
+if manual_sort_var == False:
+    if start_all_day == False:
+        ActualTime = datetime.now() + timedelta(hours=start_in)
+        print("Start in: " + ActualTime.strftime("%Y-%m-%d %H:%M:%S"))
+        time.sleep(start_in * 3600)
+    else:
+        try:
+            scanTime = datetime.strptime(start_all_day, "%H:%M")
+        except:
+            date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            with open('log/fatal_error.log', 'a') as f:
+                f.write(date + " - " + "Error in start_all_day variable" + "\n")
+        
+        ActualTime = datetime.now()
+        ActualTime = ActualTime.replace(hour=scanTime.hour, minute=scanTime.minute, second=0, microsecond=0)
+        if ActualTime < datetime.now():
+            ActualTime = ActualTime + timedelta(days=1)
+        print("Start in: " + ActualTime.strftime("%Y-%m-%d %H:%M:%S"))
+        time.sleep((ActualTime - datetime.now()).seconds)
 
 
 while True:
